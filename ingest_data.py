@@ -6,7 +6,7 @@ import pickle
 
 
 print("Loading data...")
-loader = UnstructuredFileLoader("state_of_the_union.txt")
+loader = UnstructuredFileLoader("lawfaq.txt")
 raw_documents = loader.load()
 
 
@@ -21,7 +21,8 @@ documents = text_splitter.split_documents(raw_documents)
 
 
 print("Creating vectorstore...")
-embeddings = OpenAIEmbeddings()
+openai_api_key='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'
+embeddings = OpenAIEmbeddings(openai_api_key=openai_api_key,model="text-embedding-ada-002")
 vectorstore = FAISS.from_documents(documents, embeddings)
 with open("vectorstore.pkl", "wb") as f:
     pickle.dump(vectorstore, f)

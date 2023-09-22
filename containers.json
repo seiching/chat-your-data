@@ -1,0 +1,8 @@
+{
+    "chatmydata": {
+        "image": ":chatmydata.chatmydata.13",
+        "ports": {
+            "7860": "HTTP"
+        }
+    }
+}

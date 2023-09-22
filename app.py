@@ -103,4 +103,5 @@ with block:
         outputs=[agent_state],
     )
 
-block.launch(debug=True)
+#block.launch(debug=True)
+block.launch(share=False,server_name="0.0.0.0")
