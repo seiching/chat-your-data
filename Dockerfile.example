@@ -1,0 +1,23 @@
+ARG PYTHON_VERSION=3.10
+# set environment variable
+
+# docker build --build-arg PYTHON_VERSION=3.9 -t gradio-app .
+FROM python:${PYTHON_VERSION}-slim
+ENV OPENAI_API_KEY=
+RUN apt-get update \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+COPY requirements.txt .
+#COPY  requirements1.txt .
+RUN pip install --upgrade pip
+RUN pip install --no-cache-dir -r requirements.txt
+#RUN pip install --no-cache-dir -r requirements1.txt
+RUN  pip install --upgrade openai
+COPY  vectorstore.pkl /app
+COPY  *.py /app
+
+EXPOSE 7860
+
+CMD ["python", "app.py"]
