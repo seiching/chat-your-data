@@ -21,7 +21,7 @@ documents = text_splitter.split_documents(raw_documents)
 
 
 print("Creating vectorstore...")
-openai_api_key='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'
+openai_api_key=''
 embeddings = OpenAIEmbeddings(openai_api_key=openai_api_key,model="text-embedding-ada-002")
 vectorstore = FAISS.from_documents(documents, embeddings)
 with open("vectorstore.pkl", "wb") as f:
