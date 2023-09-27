@@ -6,8 +6,7 @@ from langchain.chat_models import ChatOpenAI
 from langchain.memory import ConversationBufferMemory
 import pickle
 
-_template = """Given the following conversation and a follow up question, rephrase the follow up question to be a standalone question.
-You can assume the question about the most recent state of the union address.
+_template = """根據以下對話和一個隨後的問題，請將隨後的問題重述為一個獨立的問題。你可以假設這個問題是工程會採購法常用問題集.
 
 Chat History:
 {chat_history}
@@ -15,33 +14,43 @@ Follow Up Input: {question}
 Standalone question:"""
 CONDENSE_QUESTION_PROMPT = PromptTemplate.from_template(_template)
 
-template = """You are an AI assistant for answering questions about the most recent state of the union address.
-You are given the following extracted parts of a long document and a question. Provide a conversational answer.
-If you don't know the answer, just say "Hmm, I'm not sure." Don't try to make up an answer.
-If the question is not about the most recent state of the union, politely inform them that you are tuned to only answer questions about the most recent state of the union.
-Lastly, answer the question as if you were a pirate from the south seas and are just coming back from a pirate expedition where you found a treasure chest full of gold doubloons.
+template = """你是採購法常見問題集的客服專員及使用繁體中文(台灣)並不要用中國大陸PRC用語回答,如不要講軟件,u盤等
+你要根據以下工程會採購法常用問題集和用戶的提問提供回答.
+如果問題不在工程會採購法常用問題集內,例如常用問題集沒有提到公告金額是多少,你要回答,我不知道,並禮貌的說我只能以工程會採購法常見問題集回答.
+
 Question: {question}
 =========
 {context}
 =========
-Answer in Markdown:"""
+
+回答使用繁體中文(台灣)並以 Markdown:"""
 QA_PROMPT = PromptTemplate(template=template, input_variables=[
                            "question", "context"])
 
-
+import requests
+from os import getcwd
+chatmodlename="gpt-3.5-turbo"
 def load_retriever():
     try:
-        with open("vectorstore.pkl", "rb") as f:
+
+      # url = "https://github.com/seiching/chat-your-data/raw/master/vectorstore.pkl"
+       #directory = getcwd()
+       #filename = directory + '/vectorstore.pkl'
+       #print(filename)
+       #r = requests.get(url)
+       #f = open(filename,'w')
+       #f.write(r.content)
+       with open("vectorstore.pkl", "rb") as f:
             vectorstore = pickle.load(f)
             print( 'file success')
     except:
-        print( 'file error')
+       print( 'file error')
     retriever = VectorStoreRetriever(vectorstore=vectorstore)
     return retriever
 
 
 def get_basic_qa_chain():
-    llm = ChatOpenAI(model_name="gpt-4", temperature=0)
+    llm = ChatOpenAI(model_name=chatmodlename, temperature=0,max_tokens=1000)
     retriever = load_retriever()
     memory = ConversationBufferMemory(
         memory_key="chat_history", return_messages=True)
@@ -53,7 +62,7 @@ def get_basic_qa_chain():
 
 
 def get_custom_prompt_qa_chain():
-    llm = ChatOpenAI(model_name="gpt-4", temperature=0)
+    llm = ChatOpenAI(model_name=chatmodlename, temperature=0,max_tokens=1000)
     retriever = load_retriever()
     memory = ConversationBufferMemory(
         memory_key="chat_history", return_messages=True)
@@ -68,7 +77,7 @@ def get_custom_prompt_qa_chain():
 
 
 def get_condense_prompt_qa_chain():
-    llm = ChatOpenAI(model_name="gpt-4", temperature=0)
+    llm = ChatOpenAI(model_name=chatmodlename, temperature=0,max_tokens=1000)
     retriever = load_retriever()
     memory = ConversationBufferMemory(
         memory_key="chat_history", return_messages=True)
@@ -83,7 +92,7 @@ def get_condense_prompt_qa_chain():
 
 
 def get_qa_with_sources_chain():
-    llm = ChatOpenAI(model_name="gpt-4", temperature=0)
+    llm = ChatOpenAI(model_name=chatmodlename, temperature=0,max_tokens=1000)
     retriever = load_retriever()
     history = []
     model = ConversationalRetrievalChain.from_llm(
